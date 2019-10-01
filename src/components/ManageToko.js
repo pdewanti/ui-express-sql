@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import moment from 'moment';
+import { thisTypeAnnotation } from '@babel/types';
 
 class ManageToko extends Component {
     state = { 
@@ -51,6 +52,33 @@ class ManageToko extends Component {
           this.setState({ imagesTokoAdd: null })
         }
       }
+
+    onBtnAddImageTokoClick = () => {
+        var formdata = new FormData();
+
+        var options = {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }
+
+        var data = {
+            namaToko: this.state.selectedToko.nama,
+            tokoId: this.state.selectedToko.id
+        }
+
+        for(var i = 0; i < this.state.imagesTokoAdd.length; i++) {
+            formdata.append('image', this.state.imagesTokoAdd[i])
+        }
+        formdata.append('data', JSON.stringify(data))
+
+        axios.post('http://localhost:1997/addimagetoko', formdata, options)
+            .then(res => {
+                console.log(res.data)
+            }).catch(err => {
+                console.log(err.response)
+            })
+    }
 
     onInputNamaAddChange = (e) => {
         console.log(e.target.value)
@@ -320,11 +348,11 @@ class ManageToko extends Component {
                                 <td></td>
                                 <td></td>
                                 <td>
-                                    <input type="file" multiple />
+                                    <input type="file" onChange={this.imageTokoAddChange} multiple />
                                 </td>
                                 <td>{this.state.selectedToko.nama}</td>
                                 <td>
-                                    <input type="button" value="Add" />
+                                    <input type="button" value="Add" onClick={this.onBtnAddImageTokoClick} />
                                 </td>
                                 <td />
                             </tr>
