@@ -16,7 +16,9 @@ class ManageToko extends Component {
         inputAlamatEdit: '',
         selectedKotaEdit: 0,
         inputIncomeEdit: 0,
-        inputTanggalBerdiriEdit: moment().format('YYYY-MM-DD')
+        inputTanggalBerdiriEdit: moment().format('YYYY-MM-DD'),
+        selectedToko: { id: 0, nama: '' },
+        imagesTokoAdd: null
     }
 
     getInitialData = () => {
@@ -40,6 +42,15 @@ class ManageToko extends Component {
     componentDidMount() {
         this.getInitialData()
     }
+
+    imageTokoAddChange = (e) => {
+        console.log(e.target.files)
+        if(e.target.files[0]) {
+          this.setState({ imagesTokoAdd: e.target.files })
+        } else {
+          this.setState({ imagesTokoAdd: null })
+        }
+      }
 
     onInputNamaAddChange = (e) => {
         console.log(e.target.value)
@@ -155,6 +166,17 @@ class ManageToko extends Component {
                         <td>{moment(item.tanggalBerdiri).format('YYYY-MM-DD')}</td>
                         <td>
                             <input 
+                                type="button"
+                                value="Select"
+                                onClick={
+                                    () => {
+                                        this.setState({ selectedToko: item })
+                                    }
+                                }
+                            />
+                        </td>
+                        <td>
+                            <input 
                                 type="button" 
                                 value="Edit" 
                                 onClick={() => this.setState({ 
@@ -233,6 +255,7 @@ class ManageToko extends Component {
                                 <th>Tanggal Berdiri</th>
                                 <th></th>
                                 <th></th>
+                                <th />
                             </tr>
                         </thead>
                         <tbody>
@@ -272,6 +295,36 @@ class ManageToko extends Component {
                                 </td>
                                 <td>
                                     <input type="button" value="Add" onClick={this.onBtnAddClick} />
+                                </td>
+                                <td />
+                                <td />
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <h1>Manage Image</h1>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Image Path</th>
+                                <th>Image</th>
+                                <th>Nama Toko</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <input type="file" multiple />
+                                </td>
+                                <td>{this.state.selectedToko.nama}</td>
+                                <td>
+                                    <input type="button" value="Add" />
                                 </td>
                                 <td />
                             </tr>
