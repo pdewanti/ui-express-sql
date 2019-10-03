@@ -19,7 +19,10 @@ class ManageToko extends Component {
         inputIncomeEdit: 0,
         inputTanggalBerdiriEdit: moment().format('YYYY-MM-DD'),
         selectedToko: { id: 0, nama: '' },
-        imagesTokoAdd: null
+        imagesTokoAdd: null,
+        listImageToko: [],
+        selectedEditImageId: 0,
+        imageTokoEdit: null
     }
 
     getInitialData = () => {
@@ -51,33 +54,86 @@ class ManageToko extends Component {
         } else {
           this.setState({ imagesTokoAdd: null })
         }
-      }
+    }
+
+    imageTokoEditChange = (e) => {
+        console.log(e.target.files)
+        if(e.target.files[0]) {
+            this.setState({ imageTokoEdit: e.target.files })
+        } else {
+            this.setState({ imageTokoEdit: null })
+        }
+    }
 
     onBtnAddImageTokoClick = () => {
-        var formdata = new FormData();
+        if(this.state.imagesTokoAdd && this.state.selectedToko.id !== 0) {
+            var formdata = new FormData();
 
-        var options = {
-            headers: {
-                'Content-Type': 'multipart/form-data'
+            var options = {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             }
-        }
 
-        var data = {
-            namaToko: this.state.selectedToko.nama,
-            tokoId: this.state.selectedToko.id
-        }
+            var data = {
+                namaToko: this.state.selectedToko.nama,
+                tokoId: this.state.selectedToko.id
+            }
 
-        for(var i = 0; i < this.state.imagesTokoAdd.length; i++) {
-            formdata.append('image', this.state.imagesTokoAdd[i])
-        }
-        formdata.append('data', JSON.stringify(data))
+            for(var i = 0; i < this.state.imagesTokoAdd.length; i++) {
+                formdata.append('image', this.state.imagesTokoAdd[i])
+            }
+            formdata.append('data', JSON.stringify(data))
 
-        axios.post('http://localhost:1997/addimagetoko', formdata, options)
+            axios.post('http://localhost:1997/addimagetoko', formdata, options)
+                .then(res => {
+                    console.log(res.data)
+                    this.getImageByTokoId(this.state.selectedToko.id)
+                }).catch(err => {
+                    console.log(err.response)
+                })
+        } else {
+            alert('Mohon Image Harus Diisi Setidaknya 1, dan Pilih salah 1 toko')
+        }
+        
+    }
+
+    onBtnUpdateImageTokoClick = () => {
+        if(this.state.imageTokoEdit) {
+            var formdata = new FormData();
+
+            var options = {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+
+            formdata.append('image', this.state.imageTokoEdit[0])
+
+            axios.put('http://localhost:1997/imagetoko/' + this.state.selectedEditImageId, formdata, options)
+                .then(res => {
+                    console.log(res.data)
+                    this.setState({ selectedEditImageId: 0 })
+                    this.getImageByTokoId(this.state.selectedToko.id)
+                }).catch(err => {
+                    console.log(err.response)
+                })
+        } else {
+            alert('Mohon Image Harus Diisi')
+        }
+        
+    }
+
+    onBtnDeleteImageClick = (id) => {
+        if(window.confirm('Are You Sure?')) {
+            axios.delete('http://localhost:1997/imagetoko/' + id)
             .then(res => {
                 console.log(res.data)
+                this.getImageByTokoId(this.state.selectedToko.id)
             }).catch(err => {
                 console.log(err.response)
             })
+        }
     }
 
     onInputNamaAddChange = (e) => {
@@ -173,6 +229,21 @@ class ManageToko extends Component {
         })
     }
 
+    getImageByTokoId = (id) => {
+        axios.get('http://localhost:1997/imagetoko/' + id)
+            .then(res => {
+                console.log(res.data)
+                this.setState({ listImageToko: res.data })
+            }).catch(err => {
+                console.log(err)
+            })
+    }
+
+    onBtnSelectTokoClick = (toko) => {
+        this.setState({ selectedToko: toko })
+        this.getImageByTokoId(toko.id)
+    }
+
     renderListKota = () => {
         return this.state.listKota.map((item) => {
             return (
@@ -197,9 +268,7 @@ class ManageToko extends Component {
                                 type="button"
                                 value="Select"
                                 onClick={
-                                    () => {
-                                        this.setState({ selectedToko: item })
-                                    }
+                                    () => this.onBtnSelectTokoClick(item)
                                 }
                             />
                         </td>
@@ -263,14 +332,48 @@ class ManageToko extends Component {
         })
     }
 
+    renderListImageToko = () => {
+        return this.state.listImageToko.map((item) => {
+            if(item.id !== this.state.selectedEditImageId) {
+                return (
+                    <tr key={item.id}>
+                        <td>{item.id}</td>
+                        <td>{item.pathName}</td>
+                        <td>
+                            <img 
+                                src={`http://localhost:1997${item.pathName}`}
+                                style={{ width: '100px' }}
+                            />
+                        </td>
+                        <td>{item.NamaToko}</td>
+                        <td><input type="button" value="Edit" onClick={() => this.setState({ selectedEditImageId: item.id })} /></td>
+                        <td><input type="button" value="Delete" onClick={() => this.onBtnDeleteImageClick(item.id)} /></td>
+                    </tr>
+                )
+            }
+
+            return (
+                <tr key={item.id}>
+                    <td>{item.id}</td>
+                    <td><input type="file" onChange={this.imageTokoEditChange} /></td>
+                    <td>
+                        <img 
+                            src={`http://localhost:1997${item.pathName}`}
+                            style={{ width: '100px' }}
+                        />
+                    </td>
+                    <td>{item.NamaToko}</td>
+                    <td><input type="button" value="Cancel" onClick={() => this.setState({ selectedEditImageId: 0 })} /></td>
+                    <td><input type="button" value="Save" onClick={this.onBtnUpdateImageTokoClick} /></td>
+                </tr>
+            )
+        })
+    }
+
     render() {
         return (
             <div>
                 <center>
-                    <img 
-                        src="http://localhost:1997/images/toko/back.jpg" 
-                        style={{ width: '100px' }}
-                    />
                     <h1>Manage Toko</h1>
                     <table>
                         <thead>
@@ -342,6 +445,7 @@ class ManageToko extends Component {
                             </tr>
                         </thead>
                         <tbody>
+                            {this.renderListImageToko()}
                         </tbody>
                         <tfoot>
                             <tr>
