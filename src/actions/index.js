@@ -4,3 +4,5 @@ export const ubahPikachu = (namaActor) => {
         nama: namaActor
     }
 }
+
+export * from './RegisterFormActions';
