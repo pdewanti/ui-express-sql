@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import moment from 'moment';
-import { thisTypeAnnotation } from '@babel/types';
+import { connect } from 'react-redux';
+import { ubahPikachu } from '../actions';
 
 class ManageToko extends Component {
     state = { 
@@ -44,6 +45,7 @@ class ManageToko extends Component {
     }
 
     componentDidMount() {
+        this.props.ubahPikachu('Ryan Gosling')
         this.getInitialData()
     }
 
@@ -371,10 +373,11 @@ class ManageToko extends Component {
     }
 
     render() {
+        console.log(this.props.actorPikachu)
         return (
             <div>
                 <center>
-                    <h1>Manage Toko</h1>
+                    <h1>Manage Toko ({ this.props.actorPikachu })</h1>
                     <table>
                         <thead>
                             <tr>
@@ -468,4 +471,8 @@ class ManageToko extends Component {
     }
 }
 
-export default ManageToko;
+const mapStateToProps = (state) => {
+    return { actorPikachu: state.pikachu }
+}
+
+export default connect(mapStateToProps, { ubahPikachu })(ManageToko);
