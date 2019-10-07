@@ -3,10 +3,26 @@ import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn } from 'mdbreact';
 import { connect } from 'react-redux';
 import { 
     inputLoginEmail,
-    inputLoginPassword
+    inputLoginPassword,
+    loginUser
 } from '../actions';
 
 class Login extends Component {
+
+    onBtnLoginClick = () => {
+      this.props.loginUser(this.props.loginForm)
+    }
+    renderButtonLogin = () => {
+      if(this.props.loginForm.loading) {
+        return (<>
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </>)
+      }
+
+      return <MDBBtn onClick={this.onBtnLoginClick}>Login</MDBBtn>
+    }
     render() {
         const { 
             email,
@@ -41,8 +57,11 @@ class Login extends Component {
                         validate
                       />
                     </div>
+                    <p className="text-danger text-center">
+                      {this.props.loginForm.error}
+                    </p>
                     <div className="text-center">
-                      <MDBBtn>Login</MDBBtn>
+                      {this.renderButtonLogin()}
                     </div>
                   </form>
                 </MDBCol>
@@ -56,4 +75,4 @@ const mapStateToProps = ({ loginForm }) => {
     return { loginForm }
 }
 
-export default connect(mapStateToProps, {inputLoginEmail,inputLoginPassword})(Login);
+export default connect(mapStateToProps, {inputLoginEmail,inputLoginPassword,loginUser})(Login);
