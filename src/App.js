@@ -4,6 +4,7 @@ import ManageToko from './components/ManageToko';
 import Home from './components/Home';
 import Header from './components/Header';
 import Register from './components/Register';
+import Login from './components/Login';
 
 class App extends Component {
   render() {
@@ -14,6 +15,7 @@ class App extends Component {
           <Route exact path="/" component={Home} />
           <Route path="/managetoko" component={ManageToko} />
           <Route path="/register" component={Register} />
+          <Route path="/login" component={Login} />
         </div>
       </div>
     )
