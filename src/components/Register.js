@@ -6,10 +6,27 @@ import {
     inputRegisterUsername,
     inputRegisterConfirmEmail,
     inputRegisterConfirmPassword,
-    inputRegisterPassword
+    inputRegisterPassword,
+    registerUser
 } from '../actions';
 
 class Register extends React.Component {
+
+    onBtnRegisterClick = () => {
+      this.props.registerUser(this.props.registerForm)
+    }
+    renderButtonRegister = () => {
+      if(this.props.registerForm.loading) {
+        return (<>
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </>)
+      }
+
+      return <MDBBtn color="primary" onClick={this.onBtnRegisterClick}>Register</MDBBtn>
+    }
+
     render() {
         const { 
             email, 
@@ -77,8 +94,11 @@ class Register extends React.Component {
                         validate
                       />
                     </div>
+                    <p className="text-danger text-center">
+                      {this.props.registerForm.error}
+                    </p>
                     <div className="text-center">
-                      <MDBBtn color="primary">Register</MDBBtn>
+                      {this.renderButtonRegister()}
                     </div>
                   </form>
                 </MDBCol>
@@ -98,5 +118,6 @@ export default connect(mapStateToProps, {
     inputRegisterConfirmEmail,
     inputRegisterConfirmPassword,
     inputRegisterPassword,
-    inputRegisterUsername
+    inputRegisterUsername,
+    registerUser
 })(Register);
