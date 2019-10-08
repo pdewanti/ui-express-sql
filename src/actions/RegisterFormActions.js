@@ -60,14 +60,22 @@ export const registerUser = (user) => {
                            username: user.username
                        }).then(res => {
                             dispatch({
-                                type: REGISTER_SUCCESS
+                                type: REGISTER_SUCCESS,
+                                payload: res.data.email
                             })
                        }).catch(err => {
                            console.log(err.response)
-                           dispatch({
-                               type: REGISTER_FAILED,
-                               payload: err.response.data.message
-                           })
+                           if(err.response.data.error) {
+                                dispatch({
+                                    type: REGISTER_FAILED,
+                                    payload: err.response.data.message
+                                })
+                           } else if(!err.response.data.error) {
+                                dispatch({
+                                    type: REGISTER_SUCCESS,
+                                    payload: err.response.data.email
+                                })
+                           }
                        })
                     } else {
                         dispatch({

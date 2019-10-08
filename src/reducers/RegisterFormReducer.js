@@ -16,7 +16,9 @@ const INITIAL_STATE = {
     password: '',
     confirmPassword: '',
     loading: false,
-    error: ''
+    error: '',
+    success: false,
+    emailSuccess: ''
 }
 
 export default (state=INITIAL_STATE, action) => {
@@ -36,7 +38,7 @@ export default (state=INITIAL_STATE, action) => {
         case REGISTER_FAILED :
             return { ...state, loading: false, error: action.payload }
         case REGISTER_SUCCESS :
-            return INITIAL_STATE
+            return { ...INITIAL_STATE, success: true, emailSuccess: action.payload }
         default :
             return state
     }
