@@ -16,6 +16,7 @@ class WaitingEmailVerification extends Component {
             console.log(err.response)
             alert(err.response.data.message)
         })
+        console.log('test')
     }
 
     render() {

@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import RegisterFormReducer from './RegisterFormReducer';
 import LoginFormReducer from './LoginFormReducer';
+import UserReducer from './UserReducer';
 
 export default combineReducers({
     pikachu: (state='Ryan Reynolds', action) => {
@@ -11,5 +12,6 @@ export default combineReducers({
         return state
     },
     registerForm: RegisterFormReducer,
-    loginForm: LoginFormReducer
+    loginForm: LoginFormReducer,
+    user: UserReducer
 })

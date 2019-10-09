@@ -12,8 +12,9 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem } from 'reactstrap';
+  import { connect } from 'react-redux';
 
-export default class Header extends React.Component {
+class Header extends React.Component {
   constructor(props) {
     super(props);
 
@@ -28,6 +29,27 @@ export default class Header extends React.Component {
     });
   }
   render() {
+    if(this.props.user.username === '') {
+      return (
+        <div>
+          <Navbar color="light" light expand="md">
+            <NavbarBrand href="/">Toko Berkah</NavbarBrand>
+            <NavbarToggler onClick={this.toggle} />
+            <Collapse isOpen={this.state.isOpen} navbar>
+              <Nav className="ml-auto" navbar>
+                <NavItem>
+                  <NavLink href="/register">Register</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink href="/login">Login</NavLink>
+                </NavItem>
+              </Nav>
+            </Collapse>
+          </Navbar>
+        </div>
+      );
+    }
+
     return (
       <div>
         <Navbar color="light" light expand="md">
@@ -42,15 +64,9 @@ export default class Header extends React.Component {
                   </NavLink>
                 </Link>
               </NavItem>
-              <NavItem>
-                <NavLink href="/register">Register</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="/login">Login</NavLink>
-              </NavItem>
               <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret>
-                  Options
+                  Hello, {this.props.user.username}
                 </DropdownToggle>
                 <DropdownMenu right>
                   <DropdownItem>
@@ -61,7 +77,7 @@ export default class Header extends React.Component {
                   </DropdownItem>
                   <DropdownItem divider />
                   <DropdownItem>
-                    Reset
+                    Logout
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
@@ -72,3 +88,9 @@ export default class Header extends React.Component {
     );
   }
 }
+
+const mapStateToProps = ({ user }) => {
+    return { user }
+}
+
+export default connect(mapStateToProps)(Header);
